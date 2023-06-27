@@ -1,6 +1,12 @@
-from enum import Enum
-
-# Define an enumeration class
-class Endpoints(Enum):
-    ROOT = 'http://3.22.241.71:5000/'
-    LOGIN = 'login'
+root = "http://3.22.248.54:5000/"
+LOGIN = root + "login"
+CREAR =  root + "crear"
+DELETE = root + "delete"
+COPY = root + "copy"
+TRANSFER = root + "transfer"
+RENAME = root + "rename"
+MODIFY = root + "modify"
+DELETE_ALL = root + "delete_all"
+OPEN = root + "open"
+BACKUP = root + "backup"
+RECOVERY = root + "recover"

@@ -9,13 +9,14 @@ def validar_acceso():
     txt_usuario = entrada_usuario.get()
     txt_contrasena = entrada_contraseña.get()
 
-    usuario_encontrado = LoginController.login(txt_usuario, txt_contrasena)
+    loginController = LoginController()
+    usuario_encontrado = loginController.login(txt_usuario, txt_contrasena)
     
-    if usuario_encontrado is not None:
+    if usuario_encontrado is True:
         messagebox.showinfo("Acceso concedido", "¡Bienvenido, admin!")
         ventana_principal.withdraw()
         ventana_dashboard = Dashboard(ventana_principal)
-        ventana_dashboard.mainloop()
+        ventana_dashboard.run()
     else:
         messagebox.showerror("Acceso denegado", "Usuario o contraseña incorrectos")
            

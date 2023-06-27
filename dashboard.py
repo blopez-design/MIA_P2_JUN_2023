@@ -3,7 +3,7 @@ from tkinter import filedialog
 from tkinter.scrolledtext import ScrolledText
 
 class Dashboard:
-    def __init__(self):
+    def __init__(self, root):
         self.window = tk.Tk()
         self.window.title("Dashboard")        
         self.create_widgets()
@@ -63,9 +63,6 @@ class Dashboard:
 
     def run(self):
         self.window.mainloop()
-
-dashboard = Dashboard()
-dashboard.run()
 
 
 
