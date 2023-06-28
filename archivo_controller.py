@@ -1,51 +1,30 @@
 import requests
-from endpoints import Endpoints
+import endpoints as end
+import json
 
 class ArchivoController():
 
-    def send_request(url, payload):
-        response = requests.post(url=url, params=payload)
+    def send_request(self, url, data):
+        headers = {"Content-Type": "application/json"}
+        print(url, data, headers)
+        json_data = json.dumps(data)
+        response = requests.post(url=url, headers=headers, data=json_data)
         if response.status_code == 200:
             return True
         else:
             return False
     
-    def crear(self, name, body, path, type):
-        payload = {name, body, path, type}
-        return self.send_request(Endpoints.CREAR, payload=payload)
+    def operacion(self, data):
+        return self.send_request(end.OPERACION, data=data)
 
-    def delete(self, path, name, type):
-        payload = {path, name, type}
-        return self.send_request(Endpoints.DELETE, payload=payload)
-        
-    def copy(self, _from, to, type_to, type_from):
-        payload = { _from, to, type_to, type_from}
-        return self.send_request(Endpoints.COPY, payload=payload)
-        
-    def transfer(self, _from, to, type_to, type_from):
-        payload = { _from, to, type_to, type_from}
-        return self.send_request(Endpoints.TRANSFER, payload=payload)
-    
-    def rename(self, path, name, type):
-        payload = {path, name, type}
-        return self.send_request(Endpoints.RENAME, payload=payload)
-    
-    def modify(self, path, body, type):
-        payload = {path, body, type}
-        return self.send_request(Endpoints.MODIFY, payload=payload)
-    
-    def delete_all(self, type):
-        payload = {type}
-        return self.send_request(Endpoints.DELETE_ALL, payload=payload)
-    
     def open(self, type, ip, port, name):
         payload = {type, ip, port, name}
-        return self.send_request(Endpoints.OPEN, payload=payload)
+        return self.send_request(end.OPEN, payload=payload)
         
     def backup(self, type_to, type_from, ip, port, name):
         payload = {type_to, type_from, ip, port, name}
-        return self.send_request(Endpoints.BACKUP, payload=payload)
+        return self.send_request(end.BACKUP, payload=payload)
     
     def recovery(self,type_to, type_from, ip, port, name):
         payload = {type_to, type_from, ip, port, name}
-        return self.send_request(Endpoints.RECOVERY, payload=payload)
+        return self.send_request(end.RECOVERY, payload=payload)

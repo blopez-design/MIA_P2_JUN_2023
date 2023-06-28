@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
 from tkinter.scrolledtext import ScrolledText
+from dashboard_controller import DashboardController
 
 class Dashboard:
     def __init__(self, root):
@@ -32,11 +33,13 @@ class Dashboard:
         file_path = filedialog.askopenfilename()
         self.leer_archivo(file_path)
 
+    
     def ejecutar(self, operacion, parametros):
+        resultado = ''
+        dashboard_controller = DashboardController()
         print(operacion.lower(), str(parametros))
-        if (operacion == 'create'):
-            return
-        self.output_text_bottom.insert(tk.END, 'Se ejecuto '+operacion+'\n')
+        resultado = dashboard_controller.operacion(operacion.lower(), parametros)
+        self.output_text_bottom.insert(tk.END, resultado + '\n')
         self.output_text_bottom.update()
 
 
