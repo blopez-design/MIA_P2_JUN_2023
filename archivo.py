@@ -5,7 +5,7 @@ class Archivo:
     
     root = './archivos'
     
-    def crear(self, name, body, path, type):
+    def crear(self, name, body, path):
         path = self.root + path + name
         try:
             if os.path.exists(path):

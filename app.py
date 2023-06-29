@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from usuario import Usuario
 from archivo import Archivo
+from bucket import Bucket
 
 app = Flask(__name__)
 
@@ -23,9 +24,14 @@ def login():
 def operacion():
     data = request.get_json()
     print('operacion data: ', str(data))
-    archivo = Archivo()
+    
     if (data['operacion'] == 'create'):
-        respuesta = archivo.crear(data['name'], data['body'], data['path'], data['type'])
+        if (data['type'] == 'server'):
+            archivo = Archivo()
+            respuesta = archivo.crear(data['name'], data['body'], data['path'])
+        else:
+            bucket = Bucket()
+            respuesta = bucket.crear(data['name'], data['body'], data['path'])
         if (respuesta is True):
             return jsonify({}), 200
     
