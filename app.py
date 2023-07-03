@@ -34,13 +34,13 @@ def delete_all():
     print('operacion data: ', str(data))
     
     archivo = Archivo()
-    respuesta = archivo.delete_all(data['ip'], data['port'])
+    respuesta = archivo._delete_all(data['ip'], data['port'])
     return jsonify(respuesta), 200
 
 @app.route('/backup', methods=['POST'])
 def backup():
     data = request.get_json()
-    print('operacion data: ', str(data))
+    print('save data: ', str(data))
     try:
         print('data bk: ',data['data'])
     except:

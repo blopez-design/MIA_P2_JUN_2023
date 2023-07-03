@@ -8,7 +8,7 @@ class Archivo:
     
     backup = './backup/'
     root = './archivos'
-    recovery = '/recovery'
+    recovery = '/recovery/'
     nombre_host = socket.gethostname()
     direccion_ip = socket.gethostbyname(nombre_host)
 
@@ -88,7 +88,7 @@ class Archivo:
                 return {"status": True, "message": f'{operacion} en {ip_from}:{port_from} creado exitosamente'}
             else:
                 if os.path.exists(self.backup+name):
-                    shutil.copytree(self.backup + name, self.root + self.recovery)
+                    shutil.copytree(self.backup + name, self.root + self.recovery + name)
                     return {"status": True, "message": f'{operacion} en {ip_from}:{port_from} creado exitosamente'}         
                 else:
                     return {"status": False, "message": f'El {operacion} en {ip_from}:{port_from} no existe'}
