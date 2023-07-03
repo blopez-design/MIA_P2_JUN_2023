@@ -4,7 +4,7 @@ class DashboardController():
 
     def operacion(self, operacion, parametros):
         if (operacion == 'create'):
-            data = {"operacion": "create","name": "", "body": "", "path": "", "type": ""}
+            data = {"operacion": "create", "name": "", "body": "", "path": "", "ip": "", "port": ""}
             for parametro in parametros:
                 campo_valor = parametro.split("->")
                 if (campo_valor[0].lower() == "name"):
@@ -12,15 +12,46 @@ class DashboardController():
                 if (campo_valor[0].lower() == "body"):
                     data['body'] = campo_valor[1].strip("\"")
                 if (campo_valor[0].lower() == "path"):
-                    data['path'] = campo_valor[1].strip("\"")
-                if (campo_valor[0].lower() == "type"):
-                    data['type'] = campo_valor[1].strip("\"")
+                    data['_path'] = campo_valor[1].strip("\"")
+                if (campo_valor[0].lower() == "ip"):
+                    data['ip'] = campo_valor[1].strip("\"")
+                if (campo_valor[0].lower() == "port"):
+                    data['port'] = campo_valor[1].strip("\"")
             print(data)
             archivo = ArchivoController()
-            resultado = archivo.operacion(data)
-            if (resultado == True):
-                return 'Se ha creado ' + data['path']+data['name']
-            return 'Error al crear ' + data['path']+data['name']
+            resultado = archivo._create(data)    
+            return resultado['message']
+        elif (operacion == 'delete_all'):
+            data = {"operacion": "delete","ip": "", "port": ""}
+            for parametro in parametros:
+                campo_valor = parametro.split("->")
+                if (campo_valor[0].lower() == "ip"):
+                    data['ip'] = campo_valor[1].strip("\"")
+                if (campo_valor[0].lower() == "port"):
+                    data['port'] = campo_valor[1].strip("\"")
+            print(data)
+            archivo = ArchivoController()
+            resultado = archivo._delete_all(data)
+            return resultado['message']
+        if (operacion == 'backup'):
+            data = {"operacion": "backup", "name": "", "ip_from": "", "port_from": "", "ip_to": "", "port_to": ""}
+            for parametro in parametros:
+                campo_valor = parametro.split("->")
+                if (campo_valor[0].lower() == "name"):
+                    data['name'] = campo_valor[1].strip("\"")
+                if (campo_valor[0].lower() == "ip_from"):
+                    data['ip_from'] = campo_valor[1].strip("\"")
+                if (campo_valor[0].lower() == "port_from"):
+                    data['port_from'] = campo_valor[1].strip("\"")
+                if (campo_valor[0].lower() == "ip_to"):
+                    data['ip_to'] = campo_valor[1].strip("\"")
+                if (campo_valor[0].lower() == "port_to"):
+                    data['port_to'] = campo_valor[1].strip("\"")
+            print(data)
+            archivo = ArchivoController()
+            resultado = archivo._backup(data)
+            print('resultado: ', resultado)    
+            return resultado['message']
         elif (operacion == 'delete'):
             data = {"operacion": "delete","name": "", "path": "", "type": ""}
             for parametro in parametros:

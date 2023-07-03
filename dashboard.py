@@ -6,7 +6,10 @@ from dashboard_controller import DashboardController
 class Dashboard:
     def __init__(self, root):
         self.window = tk.Tk()
-        self.window.title("Dashboard")        
+        self.window.title("Dashboard")
+        ancho_pantalla = self.window.winfo_screenwidth()
+        alto_pantalla = self.window.winfo_screenheight()
+        self.window.geometry(f"{ancho_pantalla}x{alto_pantalla}")      
         self.create_widgets()
         
     def create_widgets(self):
@@ -14,11 +17,11 @@ class Dashboard:
         file_frame.pack(anchor="center")
         
         file_button = tk.Button(file_frame, text="Carga una archivo", command=self.open_file)
-        file_button.pack(side=tk.LEFT, padx=5)
+        file_button.pack(side=tk.LEFT, padx=5, pady=15)
         command_frame_top = tk.Frame(file_frame)
         command_frame_top.pack(anchor="w")
 
-        self.output_text = ScrolledText(self.window, height=20, bg="black", fg="white", wrap="none")
+        self.output_text = ScrolledText(self.window, height=30, width=self.window.winfo_screenwidth(), bg="black", fg="white", wrap="none")
         self.output_text.pack(anchor="w", padx=5)
         self.output_text.configure(font=("Courier", 10))  # Configurar la fuente monoespaciada
         self.output_text.tag_configure("code", font=("Courier", 10))  # Configurar el estilo de la sintaxis
@@ -26,7 +29,7 @@ class Dashboard:
 
         output_label_bottom = tk.Label(self.window, text="Salida inferior:")
         output_label_bottom.pack(anchor="w")
-        self.output_text_bottom = tk.Text(self.window, height=5)
+        self.output_text_bottom = tk.Text(self.window, height=10, width=self.window.winfo_screenwidth())
         self.output_text_bottom.pack(padx=5)
         
     def open_file(self):

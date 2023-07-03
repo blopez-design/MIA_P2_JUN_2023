@@ -14,6 +14,31 @@ class ArchivoController():
         else:
             return False
     
+    def _send_request(self, url, data):
+        headers = {"Content-Type": "application/json"}
+        print(url, data, headers)
+        json_data = json.dumps(data)
+        try:
+            response = requests.post(url=url, headers=headers, data=json_data)
+            print('Respuesta: ', response)
+            return response.json()
+        except Exception as e:
+            return {"status": False, "message": 'Error en la solcitud: ' + str(e)}
+    
+    def _create(self, data):
+        url = f'http://{data["ip"]}:{data["port"]}/create'
+        return self._send_request(url, data=data)
+    
+    def _delete_all(self, data):
+        url = f'http://{data["ip"]}:{data["port"]}/delete_all'
+        return self._send_request(url, data=data)
+    
+
+    def _backup(self, data):
+        url_from = f'http://{data["ip_from"]}:{data["port_from"]}/backup'
+        return self._send_request(url_from, data=data)
+    
+
     def operacion(self, data):
         return self.send_request(end.OPERACION, data=data)
 
