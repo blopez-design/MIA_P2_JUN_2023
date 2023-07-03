@@ -19,6 +19,31 @@ def login():
         return jsonify(response), 200
     return jsonify({}), 400
 
+@app.route('/create', methods=['POST'])
+def create():
+    data = request.get_json()
+    print('operacion data: ', str(data))
+    
+    archivo = Archivo()
+    respuesta = archivo._crear(data['name'], data['body'], data['_path'], data['ip'], data['port'])
+    return jsonify(respuesta), 200
+
+@app.route('/delete_all', methods=['POST'])
+def delete_all():
+    data = request.get_json()
+    print('operacion data: ', str(data))
+    
+    archivo = Archivo()
+    respuesta = archivo.delete_all(data['ip'], data['port'])
+    return jsonify(respuesta), 200
+
+@app.route('/backup', methods=['POST'])
+def backup():
+    data = request.get_json()
+    print('operacion data: ', str(data))
+    archivo = Archivo()
+    respuesta = archivo.backup_decide(data['name'], data['ip_from'], data['port_from'], data['ip_to'], data['port_to'], data['data'])
+    return jsonify(respuesta), 200
 
 @app.route('/operacion', methods=['POST'])
 def operacion():
@@ -26,32 +51,59 @@ def operacion():
     print('operacion data: ', str(data))
     
     if (data['operacion'] == 'create'):
+        respuesta = False
         if (data['type'] == 'server'):
             archivo = Archivo()
             respuesta = archivo.crear(data['name'], data['body'], data['path'])
-        else:
+        elif (data['type'] == 'bucket'):
             bucket = Bucket()
             respuesta = bucket.crear(data['name'], data['body'], data['path'])
+        
         if (respuesta is True):
             return jsonify({}), 200
     
     if (data['operacion'] == 'delete'):
-        respuesta = archivo.delete(data['path'], data['name'], data['type'])
+        if (data['type'] == 'server'):
+            archivo = Archivo()
+            respuesta = archivo.delete(data['path'], data['name'], data['type'])
+        elif (data['type'] == 'bucket'):
+            bucket = Bucket()
+            respuesta = bucket.eliminar(data['path'], data['name'])
         if (respuesta is True):
             return jsonify({}), 200
         
     if (data['operacion'] == 'copy'):
-        respuesta = archivo.copy(data['from'], data['to'], data['type_to'], data['type_from'])
+        respuesta = False
+        if (data['type_to'] == 'server'):
+            archivo = Archivo()
+            respuesta = archivo.transfer(data['from'], data['to'], False)
+        elif (data['type_to'] == 'bucket'):
+            bucket = Bucket()
+            respuesta = bucket.transfer(data['to'], data['from'])
+        
         if (respuesta is True):
             return jsonify({}), 200
-    
+
     if (data['operacion'] == 'transfer'):
-        respuesta = archivo.transfer(data['from'], data['to'], data['type_to'], data['type_from'])
+        respuesta = False
+        if (data['type_to'] == 'server'):
+            archivo = Archivo()
+            respuesta = archivo.transfer(data['from'], data['to'], True)
+        elif (data['type_to'] == 'bucket'):
+            bucket = Bucket()
+            respuesta = bucket.transfer(data['to'], data['from'])
         if (respuesta is True):
             return jsonify({}), 200
-    
+        
     if (data['operacion'] == 'rename'):
-        respuesta = archivo.rename(data['path'], data['name'], data['type'])
+        respuesta = False
+        if (data['type'] == 'server'):
+            archivo = Archivo()
+            respuesta = archivo.rename(data['path'], data['name'])
+        elif (data['type'] == 'bucket'):
+            bucket = Bucket()
+            respuesta = bucket.rename(data['path'], data['name'])
+        
         if (respuesta is True):
             return jsonify({}), 200
     
@@ -61,7 +113,13 @@ def operacion():
             return jsonify({}), 200
         
     if (data['operacion'] == 'delete_all'):
-        respuesta = archivo.delete_all(data['type'])
+        respuesta = False
+        if (data['type'] == 'server'):
+            archivo = Archivo()
+            respuesta = archivo.delete_all(data['path'], data['name'], data['type'])
+        elif (data['type'] == 'bucket'):
+            bucket = Bucket()
+            respuesta = bucket.eliminar(data['path'], data['name'])
         if (respuesta is True):
             return jsonify({}), 200
         
@@ -79,7 +137,7 @@ def open():
         return jsonify({}), 200
     return jsonify({}), 400
 
-@app.route('/backup', methods=['POST'])
+""" @app.route('/backup', methods=['POST'])
 def backup():
     data = request.get_json()
     print('backup data: ', str(data))
@@ -87,7 +145,7 @@ def backup():
     respuesta = archivo.backup(data['type_to'], data['type_from'],data['ip'],data['port'],data['name'])
     if (respuesta is not None):
         return jsonify({}), 200
-    return jsonify({}), 400
+    return jsonify({}), 400 """
 
 @app.route('/recovery', methods=['POST'])
 def recovery():
