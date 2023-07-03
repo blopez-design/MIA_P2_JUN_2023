@@ -46,8 +46,9 @@ def backup():
     except:
         data['data'] = ''
     archivo = Archivo()
-    respuesta = archivo.backup_decide(data['name'], data['ip_from'], data['port_from'], data['ip_to'], data['port_to'], data['data'])
-    return respuesta, 200
+    respuesta = archivo.backup_decide(data['name'], data['ip_from'], data['port_from'], data['ip_to'], data['port_to'], data['data'], data['operacion'])
+    return jsonify(respuesta), 200
+
 
 @app.route('/operacion', methods=['POST'])
 def operacion():
@@ -151,16 +152,3 @@ def backup():
         return jsonify({}), 200
     return jsonify({}), 400 """
 
-@app.route('/recovery', methods=['POST'])
-def recovery():
-    data = request.get_json()
-    print('recovery data: ', str(data))
-    archivo = Archivo()
-    respuesta = archivo.recovery(data['type_to'], data['type_from'],data['ip'],data['port'],data['name'])
-    if (respuesta is not None):
-        response = {
-            'message': 'Archivo creado exitosamente',
-            'data': True
-        }
-        return jsonify(response), 200
-    return jsonify({}), 400

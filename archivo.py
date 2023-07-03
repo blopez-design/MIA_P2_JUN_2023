@@ -8,6 +8,7 @@ class Archivo:
     
     backup = './backup/'
     root = './archivos'
+    recovery = '/recovery'
     nombre_host = socket.gethostname()
     direccion_ip = socket.gethostbyname(nombre_host)
 
@@ -72,37 +73,52 @@ class Archivo:
                 self.recorrerJsonServer(f'{self.name}/', jsoN["data"]["archivos"], self.tipoA, self.name)
             return res.text
         
-    def backup_decide(self, name, ip_from, port_from, ip_to = "", port_to = "", data = ""):
+    def backup_decide(self, name, ip_from, port_from, ip_to = "", port_to = "", data = "", operacion = ""):
         if (ip_to == "" and port_to == ""):
-            return self.backup_local(ip_from, port_from, name)
+            return self.backup_local(ip_from, port_from, name, operacion)
         elif (ip_to != "" and port_to != ""):
-            return self.backup_clud(ip_to, port_to, name, ip_from, port_from, data)
+            return self.backup_clud(ip_to, port_to, name, ip_from, port_from, data, operacion)
         else:
-            return {"status": False, "message": f'Error se desconce donde necesita realizar el backup'}
+            return {"status": False, "message": f'Error se desconce donde necesita realizar el {operacion}'}
 
-    def backup_local(self, ip_from, port_from, name):
+    def backup_local(self, ip_from, port_from, name, operacion):
         try:
-            shutil.copytree(self.root, './backup/'+name)
-            return {"status": True, "message": f'Backup en {ip_from}:{port_from} creado exitosamente'}
+            if (operacion == 'backup'):
+                shutil.copytree(self.root, self.backup+name)
+                return {"status": True, "message": f'{operacion} en {ip_from}:{port_from} creado exitosamente'}
+            else:
+                if os.path.exists(self.backup+name):
+                    shutil.copytree(self.backup + name, self.root + self.recovery)
+                    return {"status": True, "message": f'{operacion} en {ip_from}:{port_from} creado exitosamente'}         
+                else:
+                    return {"status": False, "message": f'El {operacion} en {ip_from}:{port_from} no existe'}
         except Exception as e:
-            return {"status": False, "message": f'Error al crear backup en {ip_from}:{port_from}. Razón: {e}'}
+            return {"status": False, "message": f'Error al crear {operacion} en {ip_from}:{port_from}. Razón: {e}'}
 
-    def backup_clud(self, ip_to, port_to, name, ip_from, port_from, data):
+    def backup_clud(self, ip_to, port_to, name, ip_from, port_from, data, operacion):
             if (data == ""):
                 try:
-                    resT = self.listadoJsonServer(self.root)
-                    response = requests.post(url=f"http://{ip_to}:{port_to}/backup", 
-                                             json={"ip_from": ip_from, "port_from": port_from, "ip_to": ip_to, "port_to": port_to, "name": name, "data": json.loads("{"+resT+"}")})
-                    #return {"status": True, "message": f'Backup {name} realizado en {ip_to}:{port_to}'}
-                    return response.json()
+                    ruta = self.root
+                    if (operacion == 'recovery'):
+                        ruta = self.backup + name
+                    if os.path.exists(ruta):
+                        resT = self.listadoJsonServer(ruta)
+                        response = requests.post(url=f"http://{ip_to}:{port_to}/backup", 
+                                                json={"ip_from": ip_from, "port_from": port_from, "ip_to": ip_to, "port_to": port_to, "name": name, "data": json.loads("{"+resT+"}")})
+                        return response.json()
+                    else:
+                        return {"status": False, "message": f'El {operacion} en {ip_from}:{port_from} no existe'}
                 except Exception as e:
                     return {"status": False, "message": f'Error al conectarse con {ip_to}:{port_to}. Razón: {e}'}
             else:
                 try:
-                    self.recorrerJsonServer(self.backup+name, data)
-                    return {"status": True, "message": f'Backup en {ip_to}:{port_to} creado exitosamente'}
+                    ruta = self.backup+name
+                    if (operacion == 'recovery'):
+                        ruta = self.root + self.recovery
+                    self.recorrerJsonServer(ruta, data)
+                    return {"status": True, "message": f'{operacion} en {ip_to}:{port_to} creado exitosamente'}
                 except Exception as e:
-                    return {"status": False, "message": f'Error al crear backup en {ip_to}:{port_to}. Razón: {e}'}
+                    return {"status": False, "message": f'Error al realizar {operacion} en {ip_to}:{port_to}. Razón: {e}'}
 
     def listadoJsonServer(self, url):
         listado = os.listdir(url)
@@ -324,7 +340,3 @@ class Archivo:
     def open(self, type, ip, port, name):
         payload = {type, ip, port, name}
         return self.send_request(Endpoints.OPEN, payload=payload)
-        
-    def recovery(self,type_to, type_from, ip, port, name):
-        payload = {type_to, type_from, ip, port, name}
-        return self.send_request(Endpoints.RECOVERY, payload=payload)
