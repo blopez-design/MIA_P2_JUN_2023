@@ -41,9 +41,13 @@ def delete_all():
 def backup():
     data = request.get_json()
     print('operacion data: ', str(data))
+    try:
+        print('data bk: ',data['data'])
+    except:
+        data['data'] = ''
     archivo = Archivo()
     respuesta = archivo.backup_decide(data['name'], data['ip_from'], data['port_from'], data['ip_to'], data['port_to'], data['data'])
-    return jsonify(respuesta), 200
+    return respuesta, 200
 
 @app.route('/operacion', methods=['POST'])
 def operacion():

@@ -89,11 +89,14 @@ class Archivo:
 
     def backup_clud(self, ip_to, port_to, name, ip_from, port_from, data):
             if (data == ""):
-                resT = self.listadoJsonServer(self.root)
-                res = requests.post(
-                    url=f"http://{ip_to}:{port_to}/backup",  # URL METODO
-                    json={"name": name, "archivos": json.loads("{"+resT+"}")})
-                return res
+                try:
+                    resT = self.listadoJsonServer(self.root)
+                    response = requests.post(url=f"http://{ip_to}:{port_to}/backup", 
+                                             json={"ip_from": ip_from, "port_from": port_from, "ip_to": ip_to, "port_to": port_to, "name": name, "data": json.loads("{"+resT+"}")})
+                    #return {"status": True, "message": f'Backup {name} realizado en {ip_to}:{port_to}'}
+                    return response.json()
+                except Exception as e:
+                    return {"status": False, "message": f'Error al conectarse con {ip_to}:{port_to}. Razón: {e}'}
             else:
                 try:
                     self.recorrerJsonServer(self.backup+name, data)
@@ -125,10 +128,10 @@ class Archivo:
                     return txtJson
         return ''
 
-    def readTxt(self, path, nombre):
+    def readTxt(self, path):
         contenido = ''
         try:
-            with open(path+nombre, 'r') as archivo:
+            with open(path, 'r') as archivo:
                 contenido = archivo.read()
             return contenido
         except Exception as e:
