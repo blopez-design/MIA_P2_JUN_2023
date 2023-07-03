@@ -33,7 +33,7 @@ class DashboardController():
             archivo = ArchivoController()
             resultado = archivo._delete_all(data)
             return resultado['message']
-        if (operacion == 'backup'):
+        if (operacion == 'backup' or operacion == 'recovery'):
             data = {"operacion": "backup", "name": "", "ip_from": "", "port_from": "", "ip_to": "", "port_to": ""}
             for parametro in parametros:
                 campo_valor = parametro.split("->")
@@ -47,11 +47,13 @@ class DashboardController():
                     data['ip_to'] = campo_valor[1].strip("\"")
                 if (campo_valor[0].lower() == "port_to"):
                     data['port_to'] = campo_valor[1].strip("\"")
-            print(data)
             archivo = ArchivoController()
+            data['operacion'] = operacion
             resultado = archivo._backup(data)
-            print('resultado: ', resultado)    
+            print(data)
+            print('resultado: ', resultado)
             return resultado['message']
+
         elif (operacion == 'delete'):
             data = {"operacion": "delete","name": "", "path": "", "type": ""}
             for parametro in parametros:

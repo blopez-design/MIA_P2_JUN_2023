@@ -37,7 +37,6 @@ class ArchivoController():
     def _backup(self, data):
         url_from = f'http://{data["ip_from"]}:{data["port_from"]}/backup'
         return self._send_request(url_from, data=data)
-    
 
     def operacion(self, data):
         return self.send_request(end.OPERACION, data=data)
